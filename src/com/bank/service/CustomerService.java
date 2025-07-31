@@ -205,11 +205,11 @@ public class CustomerService {
 
 	public void customerOperations() {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter " + "\n 1.Credit " + "\n 2.Debit " + "\n 3.Check Statement " + "\n 4.Check Balance "
-				+ "\n 5.Close Account" +"\n 6.Exit");
 		boolean loop=true;
 		while(loop)
 		{
+			System.out.println("Enter " + "\n 1.Credit " + "\n 2.Debit " + "\n 3.Check Statement " + "\n 4.Check Balance "
+				+ "\n 5.Update Pin" +"\n 6.Close Account"+"\n 7.Exit");
 			switch (sc.nextInt()) {
 			case 1:
 				System.out.println("Credit");
@@ -228,14 +228,17 @@ public class CustomerService {
 				checkBalance();
 				break;
 			case 5:
+				updatingPin();
+				break;
+			case 6:
 				System.out.println("Close Account");
 				closeAccountOperation();
 				break;
-			case 6:
+				
+			case 7:
 				System.out.println("Thank you.....!");
 				loop=false;
 				break;
-				
 			default:
 				System.out.println("Inavalid Option..");
 				break;
@@ -269,7 +272,7 @@ public class CustomerService {
 					double balance = cd.getAmount();
 					if (amount <= balance) {
 						double money = balance - amount;
-						if (customerDAO.updateAmount(money, pin)) {
+						if (customerDAO.updateAmount(money,accNum, pin)) {
 							TransactionDetails transactionDetails = new TransactionDetails();
 							transactionDetails.setTransactionType("DEBIT");
 							transactionDetails.setTransactionAmount(amount);
@@ -312,7 +315,7 @@ public class CustomerService {
 				if (amount >= 0) {
 					double balance = cd.getAmount();
 					double money = balance + amount;
-					if (customerDAO.updateAmount(money, pin)) {
+					if (customerDAO.updateAmount(money,accNum, pin)) {
 						TransactionDetails transactionDetails = new TransactionDetails();
 						transactionDetails.setTransactionType("CREDIT");
 						transactionDetails.setTransactionAmount(amount);
@@ -369,6 +372,37 @@ public class CustomerService {
 
 		} else {
 			System.out.println("You can access only your bank account");
+		}
+	}
+	public void updatingPin() {
+		System.out.println("Enter your Account Number");
+		long accountNumber = sc.nextLong();
+		System.out.println("Enter your Old Pin");
+		int oldPin = sc.nextInt();
+		if(this.pin==oldPin )
+		{
+			boolean status = true;
+			while(status)
+			{
+				System.out.println("Enter your New Pin");
+				int firstPin = sc.nextInt();
+				System.out.println("Confirm Your Pin");
+				int secondPin = sc.nextInt();
+				if(firstPin==secondPin)
+				{
+					if(customerDAO.updatePinUsingAccountNumber(accountNumber, secondPin))
+					{
+						System.out.println("Pin Updated Successfully");
+						this.pin=secondPin;
+						status =false;
+					}
+				}
+				else
+				{
+					System.err.println("Password DoesNot Matched");
+				}
+			}
+
 		}
 	}
 }
