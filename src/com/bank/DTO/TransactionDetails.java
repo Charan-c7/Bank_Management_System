@@ -83,7 +83,7 @@ public class TransactionDetails
 		return "TransactionId=" + transactionId + "\n TransactionType=" + transactionType
 				+ "\n TransactionAmount=" + transactionAmount + "\n TransactionDate=" + transactionDate
 				+ "\n TransactionTime=" + transactionTime + "\n BalanceAmount=" + balanceAmount + "\n TransactionStatus="
-				+ transactionStatus + "\n CustomerAccountNumber=" + customerAccountNumber + "\n ***---***---***---***---***---";
+				+ transactionStatus + "\n ***---***---***---***---***---";
 	}
 	
 }
