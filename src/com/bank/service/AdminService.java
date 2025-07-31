@@ -70,14 +70,53 @@ public class AdminService
 							System.out.println("****----****----****----****----****----****----");
 						
 					}
-//					System.out.println(lq);
 					System.out.println("Enter \n 1.To generate account number for one person \n "
 							+ "2.To Accept all to generate the account number");
 					switch (sc.nextInt()) 
 					{
-					case 1:
-						
+					case 1: {
+						sc.nextLine(); 
+						System.out.print("Enter the Email ID of the customer to approve: ");
+						String email = sc.next();
+						boolean found = false;
+						for (CustomerDetails customer : pd) {
+							if (customer.getEmailid().equalsIgnoreCase(email)) {
+								Random r = new Random();
+
+								int acn = r.nextInt(10000000);
+								if (acn < 1000000)
+									acn += 1000000;
+								else if (acn > 9999999)
+									acn -= 1000000;
+								customer.setAccoutNumber(acn);
+
+								int pin = r.nextInt(10000);
+								if (pin < 1000)
+									pin += 1000;
+								else if (pin > 9999)
+									pin -= 1000;
+								customer.setPin(pin);
+
+								customer.setStatus("Accepted");
+
+								List<CustomerDetails> single = new ArrayList<>();
+								single.add(customer);
+								cd.updateAccountAndPinByUsingId(single);
+
+								System.out.println("Account Number and PIN generated successfully!");
+								System.out.println("Account No: " + acn);
+								System.out.println("PIN: " + pin);
+								found = true;
+								break;
+							}
+						}
+
+						if (!found) {
+							System.out.println("No pending customer found with the given Email ID.");
+						}
+
 						break;
+
 					case 2:
 					{
 						List<CustomerDetails> acceptedDetails=new ArrayList<CustomerDetails>();
@@ -124,7 +163,7 @@ public class AdminService
 				break;
 			case 3:
 				System.out.println("All Closed Account Details");
-				List<CustomerDetails> closed=cd.getAllCustomerDetailsByStatus("Pending");
+				List<CustomerDetails> closed=cd.getAllCustomerDetailsByStatus("Closed");
 				long cq=closed.stream().count();
 				
 				if(cq>0)
