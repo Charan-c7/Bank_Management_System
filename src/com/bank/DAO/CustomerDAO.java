@@ -212,8 +212,8 @@ public class CustomerDAO
 		}
 		return null;
 	}
-	final private static String update_Amount="update customer_details set Customer_Amount=? where Customer_Pin=?";
-	public boolean updateAmount(double amount,int pin)
+	final private static String update_Amount="update customer_details set Customer_Amount=? where Customer_Pin=? and Customer_Account_Number=?";
+	public boolean updateAmount(double amount,long accNum,int pin)
 	{
 		try
 		{
@@ -221,6 +221,7 @@ public class CustomerDAO
 			PreparedStatement ps2=c.prepareStatement(update_Amount);
 			ps2.setDouble(1, amount);
 			ps2.setInt(2, pin);
+			ps2.setLong(3,accNum);
 			int result=ps2.executeUpdate();
 			if(result>0)
 			{
@@ -233,38 +234,7 @@ public class CustomerDAO
 		}
 		return false;
 	}
-	public void creditAmount(double amount,int pin)
-	{
-		try
-		{
-			Connection c=DataBaseConnection.forMySqlConnection();
-			PreparedStatement ps1=c.prepareStatement(balance);
-			ps1.setInt(1, pin);
-			ResultSet rs=ps1.executeQuery();
-			if(rs.next())
-			{
-				PreparedStatement ps2=c.prepareStatement(update_Amount);
-				double balance=rs.getDouble("Customer_Amount")+amount;
-				ps2.setDouble(1, balance);
-				ps2.setInt(2, pin);
-				int result=ps2.executeUpdate();
-				if(result>0)
-				{
-					System.out.println("Amount Debited Successfully...........");
-					System.out.println("Account balnce is : "+balance+"Rs");
-				}
-				else
-				{
-					System.out.println("Invalid Pin Number");
-				}
-			}
-		}
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-			
-		}
-	}
+	
 	final private static String close_account="update customer_details set Customer_Status=? where Customer_Pin=?";
 	public boolean closeAccount(int pin)
 	{
@@ -285,5 +255,25 @@ public class CustomerDAO
 			e.printStackTrace();
 		}
 		return false;
+	}
+	final private static String updatePin="update customer_details set Customer_Pin=? where Customer_Account_Number=?";
+	public boolean updatePinUsingAccountNumber(long accountNumber,int pin)
+	{
+		try {
+			Connection connection = DataBaseConnection.forMySqlConnection();
+			PreparedStatement preStatement = connection.prepareStatement(updatePin);
+			preStatement.setInt(1,pin);
+			preStatement.setLong(2, accountNumber);
+			int result=preStatement.executeUpdate();
+			if(result>0)
+			{
+				return true;
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+		
 	}
 }
