@@ -19,7 +19,6 @@ public class CustomerService {
 	public void customerRegistration() {
 		CustomerDetails cd = new CustomerDetails();
 		List<CustomerDetails> allCustomerDetails = customerDAO.getAllCustomerDetails();
-		sc.nextLine();
 		System.out.println("Enter Customer Name:");
 		String name = sc.nextLine();
 		while (true) {
